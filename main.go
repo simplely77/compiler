@@ -46,7 +46,7 @@ func main() {
 	// 代码生成
 	cg := codegen.NewCodeGenerator()
 	output := cg.Generate(ast)
-
+	
 	// 输出目标代码
 	if err := writeOutput("output.asm", output); err != nil {
 		fmt.Printf("代码生成错误：%v\n", err)
@@ -54,6 +54,7 @@ func main() {
 	}
 
 	fmt.Println("编译成功！输出文件：output.asm")
+	fmt.Println("您可以使用emu8086打开并运行此文件")
 }
 
 func readSourceFile(path string) string {

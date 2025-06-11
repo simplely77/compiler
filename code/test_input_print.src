@@ -1,0 +1,4 @@
+input a;
+print a;
+input b;
+print b; 
