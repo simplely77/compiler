@@ -29,8 +29,6 @@ func (cg *CodeGenerator) Generate(ast *parser.AST) []string {
 		"jmp main_start", // Jump over data and procedures
 		"",
 		".DATA",
-		"    msg_input db 'Enter a number: $'",
-		"    msg_output db 'Result: $'",
 		"    msg_div_by_zero db 'Error: Division by zero!$'",
 		"    newline db 13, 10, '$'",
 	)
@@ -141,10 +139,6 @@ func (cg *CodeGenerator) genPrint(p *parser.PrintStatement) {
 	cg.genExpr(p.Expr, "ax")
 	cg.code = append(cg.code,
 		"    push ax",
-		"    mov dx, offset msg_output",
-		"    mov ah, 9",
-		"    int 21h",
-		"    pop ax",
 		"    call print_number",
 		"    mov dx, offset newline",
 		"    mov ah, 9",
@@ -154,9 +148,6 @@ func (cg *CodeGenerator) genPrint(p *parser.PrintStatement) {
 
 func (cg *CodeGenerator) genInput(i *parser.InputStatement) {
 	cg.code = append(cg.code,
-		"    mov dx, offset msg_input",
-		"    mov ah, 9",
-		"    int 21h",
 		"    call read_number",
 		fmt.Sprintf("    mov %s, ax", i.Ident),
 		"    mov dx, offset newline",

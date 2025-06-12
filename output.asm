@@ -4,22 +4,10 @@ ORG 100h
 jmp main_start
 
 .DATA
-    msg_input db 'Enter a number: $'
-    msg_output db 'Result: $'
     msg_div_by_zero db 'Error: Division by zero!$'
     newline db 13, 10, '$'
-    i dw 0
-    n dw 0
-    c dw 0
-    d dw 0
-    e dw 0
-    g dw 0
-    m dw 0
-    o dw 0
     a dw 0
     b dw 0
-    f dw 0
-    h dw 0
 
 .CODE
 print_number PROC
@@ -107,142 +95,24 @@ read_number ENDP
 main_start:
     mov ax, @data
     mov ds, ax
-    mov ax, 10
+    call read_number
     mov a, ax
-    mov ax, 2
+    mov dx, offset newline
+    mov ah, 9
+    int 21h
+    mov ax, a
+    push ax
+    call print_number
+    mov dx, offset newline
+    mov ah, 9
+    int 21h
+    call read_number
     mov b, ax
-    mov ax, a
-    push ax
+    mov dx, offset newline
+    mov ah, 9
+    int 21h
     mov ax, b
-    pop bx
-    mov ax, a
     push ax
-    mov ax, b
-    pop bx
-    mov cx, ax
-    mov ax, bx
-    cmp cx, 0
-    jne label_0
-    mov dx, offset msg_div_by_zero
-    mov ah, 9
-    int 21h
-    mov ah, 4Ch
-    int 21h
-label_0:
-    cwd
-    idiv cx
-    mov c, ax
-    mov ax, c
-    push ax
-    mov dx, offset msg_output
-    mov ah, 9
-    int 21h
-    pop ax
-    call print_number
-    mov dx, offset newline
-    mov ah, 9
-    int 21h
-    mov ax, 20
-    mov d, ax
-    mov ax, -4
-    mov e, ax
-    mov ax, d
-    push ax
-    mov ax, e
-    pop bx
-    mov ax, d
-    push ax
-    mov ax, e
-    pop bx
-    mov cx, ax
-    mov ax, bx
-    cmp cx, 0
-    jne label_1
-    mov dx, offset msg_div_by_zero
-    mov ah, 9
-    int 21h
-    mov ah, 4Ch
-    int 21h
-label_1:
-    cwd
-    idiv cx
-    mov f, ax
-    mov ax, f
-    push ax
-    mov dx, offset msg_output
-    mov ah, 9
-    int 21h
-    pop ax
-    call print_number
-    mov dx, offset newline
-    mov ah, 9
-    int 21h
-    mov ax, -7
-    mov g, ax
-    mov ax, 2
-    mov h, ax
-    mov ax, g
-    push ax
-    mov ax, h
-    pop bx
-    mov ax, g
-    push ax
-    mov ax, h
-    pop bx
-    mov cx, ax
-    mov ax, bx
-    cmp cx, 0
-    jne label_2
-    mov dx, offset msg_div_by_zero
-    mov ah, 9
-    int 21h
-    mov ah, 4Ch
-    int 21h
-label_2:
-    cwd
-    idiv cx
-    mov i, ax
-    mov ax, i
-    push ax
-    mov dx, offset msg_output
-    mov ah, 9
-    int 21h
-    pop ax
-    call print_number
-    mov dx, offset newline
-    mov ah, 9
-    int 21h
-    mov ax, 10
-    mov m, ax
-    mov ax, 0
-    mov n, ax
-    mov ax, m
-    push ax
-    mov ax, n
-    pop bx
-    mov ax, m
-    push ax
-    mov ax, n
-    pop bx
-    mov cx, ax
-    mov ax, bx
-    cmp cx, 0
-    jne label_3
-    mov dx, offset msg_div_by_zero
-    mov ah, 9
-    int 21h
-    mov ah, 4Ch
-    int 21h
-label_3:
-    cwd
-    idiv cx
-    mov o, ax
-    mov ax, o
-    push ax
-    mov dx, offset msg_output
-    mov ah, 9
-    int 21h
-    pop ax
     call print_number
     mov dx, offset newline
     mov ah, 9
