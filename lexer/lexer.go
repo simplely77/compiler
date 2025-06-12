@@ -14,6 +14,7 @@ var tokenTypeToString = map[TokenType]string{
 	TOKEN_PLUS:         "PLUS",
 	TOKEN_MINUS:        "MINUS",
 	TOKEN_MULTIPLY:     "MULTIPLY",
+	TOKEN_DIVIDE:       "DIVIDE",
 	TOKEN_ASSIGN:       "ASSIGN",
 	TOKEN_SEMICOLON:    "SEMICOLON",
 	TOKEN_LPAREN:       "LPAREN",
@@ -37,6 +38,7 @@ const (
 	TOKEN_PLUS
 	TOKEN_MINUS
 	TOKEN_MULTIPLY
+	TOKEN_DIVIDE
 	TOKEN_ASSIGN
 	TOKEN_SEMICOLON
 	TOKEN_LPAREN
@@ -118,9 +120,17 @@ func (l *Lexer) NextToken() Token {
 	case '+':
 		tok = newToken(TOKEN_PLUS, l.ch)
 	case '-':
+		if isDigit(l.peekChar()) {
+			l.readChar()
+			tok.Type = TOKEN_NUMBER
+			tok.Literal = "-" + l.readNumber()
+			return tok
+		}
 		tok = newToken(TOKEN_MINUS, l.ch)
 	case '*':
 		tok = newToken(TOKEN_MULTIPLY, l.ch)
+	case '/':
+		tok = newToken(TOKEN_DIVIDE, l.ch)
 	case '=':
 		if l.peekChar() == '=' {
 			l.readChar()

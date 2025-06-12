@@ -18,12 +18,7 @@ func main() {
 
 	// 词法分析
 	l := lexer.NewLexer(sourceCode)
-	// for {
-	// 	tok := l.NextToken()
-	// 	if tok.Type == lexer.TOKEN_EOF {
-	// 		break
-	// 	}
-	// }
+
 
 	// 检查词法错误
 	if l.HasErrors() {

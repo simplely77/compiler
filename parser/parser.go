@@ -66,6 +66,7 @@ func (p *Parser) parseAssignment() (Statement, error) {
 	if err != nil {
 		return nil, err
 	}
+	// fmt.Printf("DEBUG: In parseAssignment, before semicolon check. Lookahead: Type=%s, Literal=\"%s\", Line=%d, Column=%d\n", p.lookahead.Type, p.lookahead.Literal, p.lookahead.Line, p.lookahead.Column)
 	if p.lookahead.Type != lexer.TOKEN_SEMICOLON {
 		return nil, p.newError("赋值语句缺少分号")
 	}
@@ -79,6 +80,7 @@ func (p *Parser) parsePrint() (Statement, error) {
 	if err != nil {
 		return nil, err
 	}
+	// fmt.Printf("DEBUG: In parsePrint, before semicolon check. Lookahead: Type=%s, Literal=\"%s\", Line=%d, Column=%d\n", p.lookahead.Type, p.lookahead.Literal, p.lookahead.Line, p.lookahead.Column)
 	if p.lookahead.Type != lexer.TOKEN_SEMICOLON {
 		return nil, p.newError("print语句缺少分号")
 	}
@@ -237,7 +239,7 @@ func (p *Parser) parseTerm() (Expr, error) {
 	if err != nil {
 		return nil, err
 	}
-	for p.lookahead.Type == lexer.TOKEN_MULTIPLY {
+	for p.lookahead.Type == lexer.TOKEN_MULTIPLY || p.lookahead.Type == lexer.TOKEN_DIVIDE {
 		op := p.lookahead.Literal
 		p.nextToken()
 		right, err := p.parseFactor()

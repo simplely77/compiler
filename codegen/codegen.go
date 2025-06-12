@@ -31,6 +31,7 @@ func (cg *CodeGenerator) Generate(ast *parser.AST) []string {
 		".DATA",
 		"    msg_input db 'Enter a number: $'",
 		"    msg_output db 'Result: $'",
+		"    msg_div_by_zero db 'Error: Division by zero!$'",
 		"    newline db 13, 10, '$'",
 	)
 
@@ -236,6 +237,33 @@ func (cg *CodeGenerator) genExpr(expr parser.Expr, target string) {
 			cg.code = append(cg.code, "    sub bx, ax", "    mov ax, bx")
 		case "*":
 			cg.code = append(cg.code, "    mul bx")
+		case "/":
+			cg.genExpr(e.Left, target)
+			cg.code = append(cg.code, "    push ax")
+			cg.genExpr(e.Right, "ax")
+			cg.code = append(cg.code, "    pop bx")
+
+			// 现在：AX = 右操作数 (除数), BX = 左操作数 (被除数)
+			// 我们想计算 BX / AX (被除数 / 除数)
+			// IDIV 指令期望被除数在 AX (或 DX:AX) 中，除数作为其操作数。
+			cg.code = append(cg.code,
+				"    mov cx, ax", // 将除数 (右操作数) 从 AX 移动到 CX
+				"    mov ax, bx", // 将被除数 (左操作数) 从 BX 移动到 AX
+			)
+
+			divOkLabel := cg.newLabel()
+			cg.code = append(cg.code,
+				"    cmp cx, 0",    // 检查除数 (现在在 CX 中) 是否为0
+				fmt.Sprintf("    jne %s", divOkLabel),   // 如果不为0，继续执行
+				"    mov dx, offset msg_div_by_zero", // 除数为0，显示错误信息
+				"    mov ah, 9",
+				"    int 21h",
+				"    mov ah, 4Ch",  // 程序退出
+				"    int 21h",
+				fmt.Sprintf("%s:", divOkLabel),
+				"    cwd",          // 符号扩展 AX (被除数) 到 DX:AX
+				"    idiv cx",      // 有符号除法 DX:AX / CX (除数)
+			)
 		}
 	case *parser.ComparisonExpr:
 		cg.genExpr(e.Left, "ax")
